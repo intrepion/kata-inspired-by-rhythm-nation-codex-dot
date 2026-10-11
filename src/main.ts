@@ -309,6 +309,15 @@ document.querySelectorAll<HTMLElement>("[data-lane]").forEach((el) => {
   };
 });
 window.addEventListener("keydown", (e) => {
+  const pad = (e.target as HTMLElement).closest<HTMLElement>("[data-lane]");
+  if (!dialog.open && pad && (e.code === "Enter" || e.code === "Space")) {
+    e.preventDefault();
+    if (!e.repeat && !held.has(e.code)) {
+      held.add(e.code);
+      input(Number(pad.dataset.lane));
+    }
+    return;
+  }
   if (
     dialog.open ||
     (/INPUT|BUTTON/.test((e.target as HTMLElement).tagName) &&
@@ -418,6 +427,8 @@ function draw() {
     }
   }
   if (sound.now > feedbackUntil) $("#feedback").textContent = "";
+  if (phase === "calibration" && sound.context?.state !== "running")
+    void pause("Calibration audio interrupted.");
   if (phase === "calibration" && sound.now > calibrationStart + 4.8)
     completeCalibration();
   requestAnimationFrame(draw);
