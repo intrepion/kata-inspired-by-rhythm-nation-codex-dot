@@ -9,6 +9,7 @@ import {
   type Run,
 } from "./domain";
 import { Sound } from "./audio";
+import { acceptTap, calibratedOffset, type Tap } from "./calibration";
 const $ = <T extends HTMLElement>(selector: string) =>
   document.querySelector<T>(selector)!;
 let saved = parseSave(null);
@@ -23,7 +24,8 @@ let selected = 1,
   busy = false,
   feedbackUntil = 0;
 let calibrationStart = 0,
-  calibrationTaps: number[] = [];
+  calibrationTaps: Tap[] = [];
+let transition = 0;
 const held = new Set<string>();
 let storageWarning = false;
 function persist() {
@@ -39,6 +41,7 @@ const canvas = $<HTMLCanvasElement>("#field"),
   ctx = canvas.getContext("2d")!;
 const colors = ["#70efdc", "#ffd477", "#c4a2ff", "#ff90b9"];
 function menu() {
+  transition++;
   phase = "menu";
   sound.stop();
   $("#cover").hidden = false;
@@ -73,10 +76,17 @@ function updateHud() {
 }
 async function start() {
   if (busy) return;
+  const version = ++transition;
   busy = true;
   try {
     sound.stop();
     await sound.activate(saved.volume);
+    if (version !== transition) return;
+    if (document.hidden || !document.hasFocus()) {
+      menu();
+      await sound.pause();
+      return;
+    }
     run = createRun(selected);
     origin = sound.now + 0.3;
     sound.schedule(selected, origin);
@@ -100,10 +110,10 @@ async function start() {
 }
 async function pause(reason = "Paused — take a breath.") {
   if (phase !== "playing" && phase !== "calibration") return;
+  ++transition;
   const wasCalibration = phase === "calibration";
   phase = "paused";
   held.clear();
-  await sound.pause();
   $("#cover").hidden = false;
   $("#cover-title").textContent = wasCalibration
     ? "Calibration interrupted"
@@ -119,13 +129,22 @@ async function pause(reason = "Paused — take a breath.") {
   if (wasCalibration) {
     sound.stop();
     menu();
+    $("#cover-title").textContent = "Calibration interrupted";
+    $("#cover-copy").textContent = "Start calibration again when ready.";
   }
+  await sound.pause();
 }
 async function resume() {
   if (busy) return;
+  const version = ++transition;
   busy = true;
   try {
     await sound.resume();
+    if (version !== transition) return;
+    if (document.hidden || !document.hasFocus()) {
+      await sound.pause();
+      return;
+    }
     phase = "playing";
     $("#cover").hidden = true;
     $("#pause").textContent = "Pause";
@@ -169,7 +188,9 @@ function input(lane: number) {
   if (phase !== "playing") return;
   const elapsed = sound.now - origin - saved.offset / 1000;
   if (elapsed < 0) return;
-  const { result, delta } = press(run, lane, elapsed);
+  const outcome = press(run, lane, elapsed);
+  run = outcome.run;
+  const { result, delta } = outcome;
   $("#feedback").textContent =
     result === "Empty"
       ? "EMPTY · find the pulse"
@@ -183,10 +204,17 @@ function input(lane: number) {
 }
 async function calibrate() {
   if (busy) return;
+  const version = ++transition;
   busy = true;
   try {
     sound.stop();
     await sound.activate(saved.volume);
+    if (version !== transition) return;
+    if (document.hidden || !document.hasFocus()) {
+      menu();
+      await sound.pause();
+      return;
+    }
     phase = "calibration";
     calibrationTaps = [];
     calibrationStart = sound.now + 1;
@@ -207,23 +235,15 @@ async function calibrate() {
   }
 }
 function calibrationTap() {
-  const time = sound.now - calibrationStart,
-    index = Math.round(time / 0.6);
-  if (index < 0 || index > 7 || calibrationTaps.length > index) return;
-  const delta = (time - index * 0.6) * 1000;
-  if (Math.abs(delta) > 250) return;
-  calibrationTaps.push(delta);
+  calibrationTaps = acceptTap(calibrationTaps, sound.now - calibrationStart);
   $("#start").textContent = `Tap / Space (${calibrationTaps.length} of 8)`;
   if (calibrationTaps.length === 8) completeCalibration();
 }
 function completeCalibration() {
   sound.stop();
-  if (calibrationTaps.length >= 4) {
-    const sorted = [...calibrationTaps].sort((a, b) => a - b);
-    saved.offset = Math.max(
-      -200,
-      Math.min(200, Math.round(sorted[Math.floor(sorted.length / 2)] / 5) * 5),
-    );
+  const offset = calibratedOffset(calibrationTaps);
+  if (offset !== null) {
+    saved.offset = offset;
     persist();
     $<HTMLInputElement>("#offset").value = String(saved.offset);
     $("#offset-value").textContent = `${saved.offset} ms`;
@@ -245,6 +265,7 @@ $("#start").onclick = () => {
 };
 $("#pause").onclick = () => (phase === "paused" ? void resume() : void pause());
 $("#restart").onclick = () => {
+  if (busy) return;
   sound.stop();
   if (phase === "calibration") {
     menu();
@@ -278,13 +299,15 @@ $("#offset").oninput = () => {
   $("#offset-value").textContent = `${saved.offset} ms`;
   persist();
 };
-document.querySelectorAll<HTMLElement>("[data-lane]").forEach(
-  (el) =>
-    (el.onpointerdown = (e) => {
-      e.preventDefault();
-      if (!dialog.open) input(Number(el.dataset.lane));
-    }),
-);
+document.querySelectorAll<HTMLElement>("[data-lane]").forEach((el) => {
+  el.onclick = (e) => {
+    if (e.detail === 0 && !dialog.open) input(Number(el.dataset.lane));
+  };
+  el.onpointerdown = (e) => {
+    e.preventDefault();
+    if (!dialog.open) input(Number(el.dataset.lane));
+  };
+});
 window.addEventListener("keydown", (e) => {
   if (
     dialog.open ||
@@ -380,7 +403,7 @@ function draw() {
       ctx.stroke();
     }
     if (phase === "playing") {
-      expire(run, time - saved.offset / 1000);
+      run = expire(run, time - saved.offset / 1000);
       updateHud();
       const duration = (tracks[selected].beats * 60) / tracks[selected].bpm;
       $("#progress").style.width =

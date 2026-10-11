@@ -16,30 +16,40 @@ import {
   parseSave,
 } from "../src/domain.ts";
 test("orb cannot score twice; an empty press breaks combo", () => {
-  const r = createRun(0);
+  let r = createRun(0);
   const o = r.orbs[0];
-  assert.equal(press(r, o.lane, o.time).result, "Perfect");
+  const outcome = press(r, o.lane, o.time);
+  assert.equal(outcome.result, "Perfect");
+  assert.equal(r.score, 0);
+  r = outcome.run;
   assert.equal(r.score, 1000);
   assert.equal(r.combo, 1);
-  assert.equal(press(r, o.lane, o.time).result, "Empty");
+  const empty = press(r, o.lane, o.time);
+  assert.equal(empty.result, "Empty");
+  r = empty.run;
   assert.equal(r.score, 1000);
   assert.equal(r.combo, 0);
 });
 test("misses expire once, inclusive late edge still hits", () => {
-  const r = createRun(0),
+  let r = createRun(0),
     o = r.orbs[0];
-  expire(r, o.time + 0.16);
+  r = expire(r, o.time + 0.16);
   assert.equal(r.counts.Miss, 0);
-  assert.equal(press(r, o.lane, o.time + 0.16).result, "Close");
-  expire(r, 100);
-  expire(r, 100);
+  const hit = press(r, o.lane, o.time + 0.16);
+  assert.equal(hit.result, "Close");
+  r = hit.run;
+  r = expire(r, 100);
+  r = expire(r, 100);
   assert.equal(r.counts.Miss, r.orbs.length - 1);
   assert.equal(r.counts.Close, 1);
 });
 test("perfect full chart scores, chords are independent, multiplier caps", () => {
-  const r = createRun(3);
-  for (const o of r.orbs)
-    assert.equal(press(r, o.lane, o.time).result, "Perfect");
+  let r = createRun(3);
+  for (const o of r.orbs) {
+    const hit = press(r, o.lane, o.time);
+    assert.equal(hit.result, "Perfect");
+    r = hit.run;
+  }
   assert.equal(accuracy(r), 100);
   assert.equal(r.maxCombo, r.orbs.length);
   assert.equal(r.counts.Miss, 0);

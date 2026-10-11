@@ -1,9 +1,10 @@
 # Lumen Relay specification
+
 Delegated choices, 2026-10-11. No interactive design interview took place. Grill with Docs was adapted to the user's explicit delegation of recommended decisions.
 
 ICE's original sales flyer verifies four-button gameplay, dropping balls corresponding to buttons, music synchronization, three difficulty levels and ten song choices per level. Sources: https://www.arcade-museum.com/Videogame/rhythm-nation and the creator flyer archived at https://flyers.arcade-museum.com/videogames/show/4743 (image visually inspected). No operator manual or gameplay footage was located. Exact scoring, timing, failure conditions and song arrangements are uncertain. This is an original compact adaptation, not a reproduction, Janet Jackson song adaptation, or Rhythm Heaven substitution.
 
-Four lanes D/F/J/K and pointer pads; falling orbs cross a target line. Tutorial and three 24–32 beat tracks, increasing from quarter beats to eighth beats and chords. Every track completes even with misses. Perfect <=45ms, Good <=100ms, Close <=160ms; misses and empty presses reset combo. Repeat keydown never scores. Results include score, accuracy, max combo and hit/miss counts; local best scores persist. Original oscillator music and procedural art, no external assets.
+Four lanes D/F/J/K and pointer pads; falling orbs cross a target line. Tutorial and three 32–48 beat tracks (19–21 seconds; length grows with tempo), increasing from quarter beats to eighth beats and chords. Every track completes even with misses. Perfect <=45ms, Good <=100ms, Close <=160ms; misses and empty presses reset combo. Repeat keydown never scores. Results include score, accuracy, max combo and hit/miss counts; local best scores persist. Original oscillator music and procedural art, no external assets.
 
 AudioContext clock drives music scheduling and judgement. User gesture activates audio; pause freezes the clock, resume is explicit, visibility/blur and audio interruption auto-pause. Restart discards run. Calibration provides eight metronome taps and manual -200..200ms offset; positive offset compensates late input. Settings persist, invalid storage is sanitized, storage denial does not prevent play. Calibration is subjective, not a physical latency measurement.
 

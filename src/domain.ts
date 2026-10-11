@@ -97,16 +97,16 @@ function record(run: Run, orb: Orb, result: Judgement) {
     { Perfect: 1000, Good: 700, Close: 300 }[result] *
     (1 + Math.min(4, Math.floor((run.combo - 1) / 10)) * 0.25);
 }
-export function expire(run: Run, time: number) {
+function expireMutable(run: Run, time: number) {
   for (const orb of run.orbs)
     if (!orb.hit && time - orb.time > 0.160000001) record(run, orb, "Miss");
 }
-export function press(
+function pressMutable(
   run: Run,
   lane: number,
   time: number,
 ): { result: Judgement | "Empty"; delta: number } {
-  expire(run, time);
+  expireMutable(run, time);
   const orb = run.orbs
     .filter(
       (o) =>
@@ -155,4 +155,16 @@ export function parseSave(raw: string | null): Save {
         : 0,
     ),
   };
+}
+
+export function expire(run: Run, time: number): Run {
+  if (!run.orbs.some((o) => !o.hit && time - o.time > 0.160000001)) return run;
+  const next = structuredClone(run);
+  expireMutable(next, time);
+  return next;
+}
+export function press(run: Run, lane: number, time: number) {
+  const next = structuredClone(run);
+  const feedback = pressMutable(next, lane, time);
+  return { ...feedback, run: next };
 }
