@@ -1,0 +1,2 @@
+# Audio clock and synthesized soundtrack
+Use a single Web Audio clock for scheduled oscillators, rendered orb position and input judgement. Wall-clock timers only request animation/scheduling work. Audio suspension freezes the run; explicit resume continues the same clock. Synthesizing original arrangements avoids copyrighted recordings and keeps the game offline after asset loading. Trade-off: browser/output latency remains device-dependent; calibration estimates a player's aggregate offset and cannot certify physical alignment.
