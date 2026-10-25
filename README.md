@@ -34,3 +34,7 @@ The [museum entry](https://www.arcade-museum.com/Videogame/rhythm-nation) identi
 - [Desktop screenshot](docs/screenshots/desktop.jpg), [mobile screenshot](docs/screenshots/mobile.jpg), [Hard results](docs/screenshots/hard-results.jpg).
 
 See [spec](docs/spec.md), [glossary](GLOSSARY.md), and [audio clock decision](docs/adr/0001-audio-clock.md).
+
+## Play online
+
+[Play the hosted game](https://intrepion.github.io/kata-inspired-by-rhythm-nation-codex-dot/)
