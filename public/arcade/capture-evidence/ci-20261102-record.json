@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "workflowCommit": "9b56d1036663ae1c2da9a9a0677fb893de32d17c",
+  "sourceCommit": "3f69e9411942fe2ba34df206862c30ed99bcde67",
+  "runId": "41409417458",
+  "url": "http://127.0.0.1:4233/",
+  "inputs": {
+    "index.html": "5c178bf61e311c6f0183426cb10e72a4ff753f45571aef8b48f7e69b74586184",
+    "assets/index-eR9sa7P_.js": "ead90f5a59319866353a285734dec1ca1a9f69679d6a1898b082f7656ddc696a",
+    "assets/index-lv1noYcC.css": "561e39f3aa2162ad9d6f01aa42062e7c156b7ad7cd7020ce3f3f48bbb216a1ad"
+  },
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 1280,
+    "height": 1000
+  },
+  "screenshots": [
+    "lumen-relay-01.png",
+    "lumen-relay-02.png"
+  ]
+}

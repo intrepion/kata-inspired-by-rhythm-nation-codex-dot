@@ -1,6 +1,47 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gameId": "kata-inspired-by-rhythm-nation-codex-dot",
   "playUrl": "https://intrepion.github.io/kata-inspired-by-rhythm-nation-codex-dot/",
-  "screenshots": []
+  "screenshots": [
+    {
+      "path": "arcade/screenshots/ci-20261102-01.jpg",
+      "sha256": "8e7fe46a91e51adc8b9f977aac58b393c85ba5ccd7d9bea60ebb93bd4b07b375",
+      "alt": "Lumen Relay gameplay, view 1",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/ci-20261102-01.png",
+        "sourceSha256": "1a19c5e78e7e8b3e12edc3874227f7a120cd4c195bde700ed1514fcc2924c328",
+        "captureCommit": "3f69e9411942fe2ba34df206862c30ed99bcde67",
+        "workflowRunId": "41409417458",
+        "inputHashes": {
+          "index.html": "5c178bf61e311c6f0183426cb10e72a4ff753f45571aef8b48f7e69b74586184",
+          "assets/index-eR9sa7P_.js": "ead90f5a59319866353a285734dec1ca1a9f69679d6a1898b082f7656ddc696a",
+          "assets/index-lv1noYcC.css": "561e39f3aa2162ad9d6f01aa42062e7c156b7ad7cd7020ce3f3f48bbb216a1ad"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T19:01:20Z",
+        "captureRecordPath": "arcade/capture-evidence/ci-20261102-record.json",
+        "captureRecordSha256": "2df8004ffadb8c4b230510d86765c507ccddf23257ec156a3eb688040bbd2887"
+      }
+    },
+    {
+      "path": "arcade/screenshots/ci-20261102-02.jpg",
+      "sha256": "0cf9c568e25624eafa0f6c190c91c3110ff51278c21f2da318672c1c34ed6255",
+      "alt": "Lumen Relay gameplay, view 2",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/ci-20261102-02.png",
+        "sourceSha256": "275148063d571a248836d61f75f31b27ed1af8bf0cdfcfbe9de6e254845d0611",
+        "captureCommit": "3f69e9411942fe2ba34df206862c30ed99bcde67",
+        "workflowRunId": "41409417458",
+        "inputHashes": {
+          "index.html": "5c178bf61e311c6f0183426cb10e72a4ff753f45571aef8b48f7e69b74586184",
+          "assets/index-eR9sa7P_.js": "ead90f5a59319866353a285734dec1ca1a9f69679d6a1898b082f7656ddc696a",
+          "assets/index-lv1noYcC.css": "561e39f3aa2162ad9d6f01aa42062e7c156b7ad7cd7020ce3f3f48bbb216a1ad"
+        },
+        "publishedFilesVerifiedAt": "2026-11-02T19:01:20Z",
+        "captureRecordPath": "arcade/capture-evidence/ci-20261102-record.json",
+        "captureRecordSha256": "2df8004ffadb8c4b230510d86765c507ccddf23257ec156a3eb688040bbd2887"
+      }
+    }
+  ]
 }
