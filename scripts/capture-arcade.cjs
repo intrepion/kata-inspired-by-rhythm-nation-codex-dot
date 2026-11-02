@@ -1,0 +1,9 @@
+'use strict';
+const {chromium}=require('playwright');const {mkdir,readFile,writeFile,readdir}=require('node:fs/promises');const {createHash}=require('node:crypto');const path=require('node:path');
+(async()=>{const output=process.env.CAPTURE_OUTPUT||'/tmp/lumen-relay-captures',site=process.env.CAPTURE_SITE||'capture-site';await mkdir(output,{recursive:true});const inputs={};for(const f of ['index.html',...(await readdir(path.join(site,'assets'))).map(x=>'assets/'+x)])inputs[f]=createHash('sha256').update(await readFile(path.join(site,f))).digest('hex');const browser=await chromium.launch({headless:true});try{
+ const page=await browser.newPage({viewport:{width:1280,height:1000},deviceScaleFactor:1,locale:'en-US',reducedMotion:'reduce'});await page.goto('http://127.0.0.1:4233/',{waitUntil:'domcontentloaded'});await page.locator('#start').click(); await page.waitForTimeout(2720); await page.keyboard.press('f'); await page.waitForTimeout(400); await page.mouse.move(5,5);
+ await page.locator('main').screenshot({path:path.join(output,'lumen-relay-01.png'),animations:'disabled'});
+ await page.waitForTimeout(200); await page.keyboard.press('d'); await page.waitForTimeout(600); await page.keyboard.press('k'); await page.waitForTimeout(1000);
+ await page.locator('main').screenshot({path:path.join(output,'lumen-relay-02.png'),animations:'disabled'});
+ await writeFile(path.join(output,'capture.json'),JSON.stringify({schemaVersion:1,workflowCommit:process.env.GITHUB_SHA||null,sourceCommit:process.env.GAME_SOURCE_COMMIT||null,runId:process.env.GITHUB_RUN_ID||null,url:'http://127.0.0.1:4233/',inputs,browser:browser.version(),viewport:{width:1280,height:1000},screenshots:['lumen-relay-01.png','lumen-relay-02.png']},null,2)+'\n');
+ }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
