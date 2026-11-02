@@ -38,3 +38,7 @@ See [spec](docs/spec.md), [glossary](GLOSSARY.md), and [audio clock decision](do
 ## Play online
 
 [Play the hosted game](https://intrepion.github.io/kata-inspired-by-rhythm-nation-codex-dot/)
+
+## Arcade metadata
+
+See [docs/arcade-metadata.md](docs/arcade-metadata.md) for the game-owned manifest and screenshot provenance.
